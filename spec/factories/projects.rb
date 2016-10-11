@@ -1,8 +1,8 @@
 FactoryGirl.define do
   factory :project do
-    name "MyString"
-    client nil
-    state "MyString"
-    conclusion_date "2016-10-10 21:38:07"
+    name { Faker::StarWars.character }
+    state Project::STATES.first
+    conclusion_date { Time.zone.now + 6.months }
+    client
   end
 end

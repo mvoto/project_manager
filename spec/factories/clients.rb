@@ -1,5 +1,5 @@
 FactoryGirl.define do
   factory :client do
-    name "MyString"
+    name { Faker::Pokemon.name }
   end
 end
