@@ -3,7 +3,7 @@ require 'rails_helper'
 describe Project do
   context "Associations" do
     it { is_expected.to belong_to(:client) }
-    # it { is_expected.to have_many(:notes) }
+    it { is_expected.to have_many(:notes) }
   end
 
   context "Validations" do
