@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :note do
-    name "MyString"
+    content "MyString"
     project nil
   end
 end
