@@ -33,11 +33,15 @@ group :development do
 end
 
 group :development, :test do
-  # Use RSpec for specs
   gem 'rspec-rails', '~> 3.5'
-
-  # Use Factory Girl for generating random test data
   gem 'factory_girl_rails'
+  gem 'pry-rails', '~> 0.3.4'
+end
+
+group :test do
+  gem 'shoulda-matchers', '~> 3.1.1'
+  gem 'simplecov', '~> 0.12.0', require: nil
+  gem 'database_cleaner', '~> 1.5.3'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
