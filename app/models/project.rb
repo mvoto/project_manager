@@ -1,4 +1,5 @@
 class Project < ApplicationRecord
+  include SoftDeletable
   STATES = ["started", "approving", "building", "completing", "concluded"].freeze
 
   # Associations
