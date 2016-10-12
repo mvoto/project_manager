@@ -14,4 +14,20 @@ describe Project do
 
     it { is_expected.to validate_inclusion_of(:state).in_array described_class::STATES }
   end
+
+  describe '#check_conclusion_date_errors' do
+    let(:project) { build(:project) }
+
+    it 'has no additional error' do
+      expect(project.errors).to be_empty
+    end
+
+    context 'given an invalid date entry' do
+      let(:project) { build(:project, conclusion_date: 1) }
+
+      it 'adds invalid conclusion date error' do
+        expect(project.errors).to be_empty
+      end
+    end
+  end
 end
