@@ -91,4 +91,63 @@ RSpec.describe Api::V1::ProjectsController, type: :controller do
       end
     end
   end
+
+  describe "PUT/PATCH #update" do
+    let(:project) { create(:project) }
+    let(:project_params) do
+      {
+        id: project.id,
+        project: { name: "Updated Project", conclusion_date: "2017/08/27" }
+      }
+    end
+
+    it 'makes post request successfully' do
+      patch :update, params: project_params
+
+      expect(response.status).to eq(200)
+      expect(response).to have_http_status(:success)
+    end
+
+    it 'updates a project' do
+      patch :update, params: project_params
+
+      expect(project.reload.name).to eq("Updated Project")
+    end
+
+    context 'given a non-existing client id' do
+      let(:project_params) { { project: { name: '', client_id: 0 } } }
+      let(:body) { JSON.parse(response.body) }
+
+      it 'returns error code' do
+        post :create, params: project_params
+
+        expect(response.status).to eq(422)
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it 'renders unexistent client error' do
+        post :create, params: project_params
+
+        expect(body["errors"]).to include("Client must exist")
+      end
+    end
+
+    context 'given an invalid conclusion date' do
+      let(:project_params) { { project: { conclusion_date: "1" } } }
+      let(:body) { JSON.parse(response.body) }
+
+      it 'returns error code' do
+        post :create, params: project_params
+
+        expect(response.status).to eq(422)
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it 'renders unexistent client error' do
+        post :create, params: project_params
+
+        expect(body["errors"]).to include("Conclusion date is invalid")
+      end
+    end
+  end
 end
