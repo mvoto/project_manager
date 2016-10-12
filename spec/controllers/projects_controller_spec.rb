@@ -101,7 +101,7 @@ RSpec.describe Api::V1::ProjectsController, type: :controller do
       }
     end
 
-    it 'makes post request successfully' do
+    it 'makes patch request successfully' do
       patch :update, params: project_params
 
       expect(response.status).to eq(200)
@@ -155,7 +155,7 @@ RSpec.describe Api::V1::ProjectsController, type: :controller do
     let(:project) { create(:project) }
     let(:project_params) { { id: project.id } }
 
-    it 'makes post request successfully' do
+    it 'makes patch request successfully' do
       patch :finish, params: project_params
 
       expect(response.status).to eq(200)
@@ -168,6 +168,27 @@ RSpec.describe Api::V1::ProjectsController, type: :controller do
 
         expect(project.reload.state).to eq(Project::STATES.last)
         expect(project.reload.conclusion_date).to eq(Time.zone.now)
+      end
+    end
+  end
+
+  describe "DELETE #destroy" do
+    let(:project) { create(:project) }
+    let(:project_params) { { id: project.id } }
+
+    it 'makes delete request successfully' do
+      delete :destroy, params: project_params
+
+      expect(response.status).to eq(204)
+      expect(response).to have_http_status(:no_content)
+    end
+
+    it 'archives the project' do
+      Timecop.freeze(Date.today) do
+        delete :destroy, params: project_params
+
+        expect(project.reload.archived).to be_truthy
+        expect(project.reload.archived_at).to eq(Time.zone.now)
       end
     end
   end

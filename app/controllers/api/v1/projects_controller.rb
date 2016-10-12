@@ -1,6 +1,6 @@
 module Api::V1
   class ProjectsController < ApplicationController
-    before_action :fetch_project, only: [:update, :finish]
+    before_action :fetch_project, only: [:update, :destroy, :finish]
 
     def index
       render json: Project.all.includes(:notes, :client)
@@ -27,6 +27,12 @@ module Api::V1
         @project.check_conclusion_date_errors(project_params[:conclusion_date])
         render json: { errors: @project.errors.full_messages }, status: :unprocessable_entity
       end
+    end
+
+    def destroy
+      @project.soft_delete
+
+      render json: { project: @project }, status: :no_content
     end
 
     def finish
