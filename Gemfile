@@ -47,6 +47,7 @@ group :test do
   gem 'shoulda-matchers', '~> 3.1.1'
   gem 'simplecov', '~> 0.12.0', require: nil
   gem 'database_cleaner', '~> 1.5.3'
+  gem 'timecop', '~> 0.8.0'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
