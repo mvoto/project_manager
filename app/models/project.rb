@@ -14,4 +14,11 @@ class Project < ApplicationRecord
       errors.add(:conclusion_date, 'is invalid')
     end
   end
+
+  def mark_as_finished
+    write_attribute(:state, STATES.last)
+    write_attribute(:conclusion_date, Time.zone.now)
+
+    save
+  end
 end

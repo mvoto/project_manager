@@ -30,4 +30,16 @@ describe Project do
       end
     end
   end
+
+  describe '#mark_as_finished' do
+    let(:project) { build(:project) }
+
+    it 'updates state and conclusion date' do
+      Timecop.freeze(Date.today) do
+        project.mark_as_finished
+        expect(project.reload.state).to eq(described_class::STATES.last)
+        expect(project.reload.conclusion_date).to eq(Time.zone.now)
+      end
+    end
+  end
 end
