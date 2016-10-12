@@ -4,6 +4,8 @@ Rails.application.routes.draw do
       resources :projects, only: [:index, :create, :update, :destroy] do
         member { put :finish }
       end
+
+      resources :notes, only: [:create, :destroy]
     end
   end
 end
