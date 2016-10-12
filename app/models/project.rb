@@ -9,6 +9,10 @@ class Project < ApplicationRecord
   validates :name, :client, :state, :conclusion_date, presence: true
   validates :state, inclusion: { in: STATES }
 
+  # Scopes
+  default_scope { where(archived: false).order(created_at: :desc) }
+  scope :with_archived, -> { where(archived: true).order(created_at: :desc) }
+
   def check_conclusion_date_errors(conclusion_date_entry)
     if conclusion_date_entry.present? && conclusion_date.nil?
       errors.add(:conclusion_date, 'is invalid')
