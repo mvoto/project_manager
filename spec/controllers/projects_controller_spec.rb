@@ -7,7 +7,7 @@ RSpec.describe Api::V1::ProjectsController, type: :controller do
 
     it "returns http success" do
       get :index
-      expect(response.status).to eq 200
+      expect(response.status).to eq(200)
       expect(response).to have_http_status(:success)
     end
 
@@ -34,4 +34,61 @@ RSpec.describe Api::V1::ProjectsController, type: :controller do
     end
   end
 
+  describe "POST #create" do
+    let(:client) { create(:client) }
+    let(:project_params) do
+      {
+        project: {
+          name: "New Project", client_id: client.id, conclusion_date: "2017/02/16"
+        }
+      }
+    end
+
+    it 'makes post request successfully' do
+      post :create, params: project_params
+
+      expect(response.status).to eq(201)
+      expect(response).to have_http_status(:created)
+    end
+
+    it 'creates a project' do
+      expect{ post :create, params: project_params }.to change{ Project.count }.by(1)
+    end
+
+    context 'given a non-existing client id' do
+      let(:project_params) { { project: { name: '', client_id: 0 } } }
+      let(:body) { JSON.parse(response.body) }
+
+      it 'returns error code' do
+        post :create, params: project_params
+
+        expect(response.status).to eq(422)
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it 'renders unexistent client error' do
+        post :create, params: project_params
+
+        expect(body["errors"]).to include("Client must exist")
+      end
+    end
+
+    context 'given an invalid conclusion date' do
+      let(:project_params) { { project: { client_id: client.id, conclusion_date: "1" } } }
+      let(:body) { JSON.parse(response.body) }
+
+      it 'returns error code' do
+        post :create, params: project_params
+
+        expect(response.status).to eq(422)
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it 'renders unexistent client error' do
+        post :create, params: project_params
+
+        expect(body["errors"]).to include("Conclusion date is invalid")
+      end
+    end
+  end
 end
