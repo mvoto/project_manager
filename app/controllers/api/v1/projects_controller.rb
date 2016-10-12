@@ -3,8 +3,7 @@ module Api::V1
     before_action :fetch_project, only: [:update, :finish]
 
     def index
-      # TODO: add includes to eager load other models
-      render json: { projects: Project.all }
+      render json: Project.all.includes(:notes, :client)
     end
 
     def create

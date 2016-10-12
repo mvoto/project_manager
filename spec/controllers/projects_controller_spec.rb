@@ -20,7 +20,7 @@ RSpec.describe Api::V1::ProjectsController, type: :controller do
 
       it 'renders correct project names' do
         get :index
-        project_names = body["projects"].map{|project| project["name"] }
+        project_names = body.map{|project| project["name"] }
 
         expect(project_names).to match_array(
           ["Conslog's Plan", "Google's Plan", "Apple's Plan"]
@@ -29,7 +29,7 @@ RSpec.describe Api::V1::ProjectsController, type: :controller do
 
       it 'returns expected projects count' do
         get :index
-        expect(body["projects"].count).to eq(3)
+        expect(body.count).to eq(3)
       end
     end
   end
