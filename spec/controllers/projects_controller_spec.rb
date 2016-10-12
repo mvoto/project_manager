@@ -115,38 +115,59 @@ RSpec.describe Api::V1::ProjectsController, type: :controller do
     end
 
     context 'given a non-existing client id' do
-      let(:project_params) { { project: { name: '', client_id: 0 } } }
+      let(:project_params) { { id: project.id, project: { name: '', client_id: 0 } } }
       let(:body) { JSON.parse(response.body) }
 
       it 'returns error code' do
-        post :create, params: project_params
+        patch :update, params: project_params
 
         expect(response.status).to eq(422)
         expect(response).to have_http_status(:unprocessable_entity)
       end
 
       it 'renders unexistent client error' do
-        post :create, params: project_params
+        patch :update, params: project_params
 
         expect(body["errors"]).to include("Client must exist")
       end
     end
 
     context 'given an invalid conclusion date' do
-      let(:project_params) { { project: { conclusion_date: "1" } } }
+      let(:project_params) { { id: project.id, project: { conclusion_date: "1" } } }
       let(:body) { JSON.parse(response.body) }
 
       it 'returns error code' do
-        post :create, params: project_params
+        patch :update, params: project_params
 
         expect(response.status).to eq(422)
         expect(response).to have_http_status(:unprocessable_entity)
       end
 
       it 'renders unexistent client error' do
-        post :create, params: project_params
+        patch :update, params: project_params
 
         expect(body["errors"]).to include("Conclusion date is invalid")
+      end
+    end
+  end
+
+  describe "PUT/PATCH #finish" do
+    let(:project) { create(:project) }
+    let(:project_params) { { id: project.id } }
+
+    it 'makes post request successfully' do
+      patch :finish, params: project_params
+
+      expect(response.status).to eq(200)
+      expect(response).to have_http_status(:success)
+    end
+
+    it 'updates state and conclusion date' do
+      Timecop.freeze(Date.today) do
+        patch :finish, params: project_params
+
+        expect(project.reload.state).to eq(Project::STATES.last)
+        expect(project.reload.conclusion_date).to eq(Time.zone.now)
       end
     end
   end
