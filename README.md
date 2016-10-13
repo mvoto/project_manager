@@ -1,30 +1,78 @@
-## CONSLOG - Project Management
+## Project Management Tool
 
-Esta é a aplicação de teste para a vaga de desenvolvedor Ruby on Rails na CONSLOG.
+This is a Rails REST API sample to handle projects.
 
-A aplicação é um gerenciador de projetos de arquitetura. Deverá ser uma API REST com Rails, com endpoints para as features a seguir.
+### Endpoints
 
-### Requisitos
+The API provides the following endpoints:
 
-- O sistema deve permitir criar, editar um projeto.
-- Um projeto deverá ter um nome, cliente, data de conclusão e estado.
-- Um projeto poderá receber várias notas. Estas notas que poderão ou não alterar o estado do projeto.
-- Deverá haver também um endpoint para marcar o estado do projeto como "concluído", e a data da conclusão deve ser guardada.
-- Os projetos e suas notas nunca devem ser apagadas, mas ao remover um projeto ou uma nota ela deve ser marcada como arquivada na base de dados.
-- Deve salvar data em que um projeto ou uma nota foi arquivada.
-- Projetos e Notas arquivadas não devem ser incluídas na lista de projetos.
-- Permitir que um ou mais projetos sejam arquivados em uma única requisição.
-- A lista de projetos e a lista de notas de um projeto deve ser ordenada por data de criação em ordem decrescente.
+#### - GET /api/v1/projects
 
-### O que será avaliado
+List of projects with related notes
 
-1. Entendimento dos requisitos
-2. Clareza do código
-3. Testes
-4. Controle de versão utilizando git
+##### parameters:
 
-### Prazo
+* **page:** current page of pagination
 
-- A entrega deste teste deverá ser feita em até 2 dias.
-- Todos os testes devem estar passando.
-- O resultado da avaliação será informado pelo recrutador em momento oportuno.
+#### - POST /api/v1/projects
+
+Creates a project
+
+##### parameters:
+
+* **name:** the name of the project
+* **conclusion_date:** the deadline date of the project(expected format: yyyy/mm/dd)
+* **client_id:** id of the client that project belongs to
+
+#### - PUT/PATCH /api/v1/projects/:id
+
+Updates the project by the given `id`
+
+##### parameters:
+
+* **name:** the name of the project
+* **conclusion_date:** the deadline date of the project(expected format: yyyy/mm/dd)
+* **client_id:** id of the client that project belongs to
+
+#### - PATCH /api/v1/projects/:id/finish
+
+Updates the state to `concluded` of the project by the given `id`
+
+#### - PATCH /api/v1/archive
+
+Updates the `archive` attribute to `true` and the `archived_date` of the project by the given `ids`
+This works as a soft deletion
+
+##### parameters:
+
+* **ids:** id or ids of the project that might be archived
+
+#### - POST  /api/v1/notes
+
+Creates a note for a specific project
+If you would like to change the state of a project, you could create a note with the following content:
+
+``` mark as completing```
+
+The example used `completing` as a project's state, but you could use any of the following states:
+
+`started`, `approving`, `building`, `completing`, `concluded`
+
+##### parameters:
+
+* **project_id:** id of the project that the note belongs to
+* **content:** the content text of the note
+
+#### - PATCH /api/v1/notes/:id/archive
+
+Updates the `archive` attribute to `true` and the `archived_date` of the note by the given `id`
+This works as a soft deletion
+
+
+### TODO List
+
+- Add authentication by token
+- Run more tests to improve rack-attack
+- Double check CORS settings
+- Generate some kind of documentation such as swagger-docs for example
+- Refactor the projects controller specs to use some shared examples
