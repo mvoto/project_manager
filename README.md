@@ -71,6 +71,7 @@ This works as a soft deletion
 
 ### TODO List
 
+- Add the option to filter by client for the projects endpoint
 - Add authentication by token
 - Run more tests to improve rack-attack
 - Double check CORS settings
