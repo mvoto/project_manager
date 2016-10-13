@@ -3,7 +3,7 @@ module Api::V1
     before_action :fetch_project, only: [:update, :finish]
 
     def index
-      render json: Project.all
+      paginate json: Project.all, per_page: 20
     end
 
     def create
