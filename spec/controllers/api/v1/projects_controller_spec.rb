@@ -177,14 +177,14 @@ RSpec.describe Api::V1::ProjectsController, type: :controller do
     let(:snd_project) { create(:project) }
     let(:project_params) { { ids: [fst_project.id, snd_project] } }
 
-    it 'makes soft deletion successfully' do
+    it 'makes archive request successfully' do
       patch :archive, params: project_params
 
       expect(response.status).to eq(204)
       expect(response).to have_http_status(:no_content)
     end
 
-    it 'archives the project' do
+    it 'archives the projects' do
       Timecop.freeze(Date.today) do
         patch :archive, params: project_params
 
@@ -192,18 +192,26 @@ RSpec.describe Api::V1::ProjectsController, type: :controller do
           expect(project.reload.archived).to be_truthy
           expect(project.reload.archived_at).to eq(Time.zone.now)
         end
-
       end
     end
 
     context 'given only one project' do
       let(:project_params) { { ids: fst_project.id } }
 
-      it 'makes soft deletion successfully' do
+      it 'makes archive request successfully' do
         patch :archive, params: project_params
 
         expect(response.status).to eq(204)
         expect(response).to have_http_status(:no_content)
+      end
+
+      it 'archives the project' do
+        Timecop.freeze(Date.today) do
+          patch :archive, params: project_params
+
+          expect(fst_project.reload.archived).to be_truthy
+          expect(fst_project.reload.archived_at).to eq(Time.zone.now)
+        end
       end
     end
   end

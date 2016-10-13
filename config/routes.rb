@@ -7,7 +7,9 @@ Rails.application.routes.draw do
 
       match 'archive', to: 'projects#archive', via: [:patch]
 
-      resources :notes, only: [:create, :destroy]
+      resources :notes, only: [:create] do
+        member { patch :archive }
+      end
     end
   end
 end

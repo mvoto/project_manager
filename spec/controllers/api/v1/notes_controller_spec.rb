@@ -39,12 +39,12 @@ RSpec.describe Api::V1::NotesController, type: :controller do
     end
   end
 
-  describe "DELETE #destroy" do
+  describe "PATCH #archive" do
     let(:note) { create(:note) }
     let(:note_params) { { id: note.id } }
 
-    it 'makes delete request successfully' do
-      delete :destroy, params: note_params
+    it 'makes archive request successfully' do
+      patch :archive, params: note_params
 
       expect(response.status).to eq(204)
       expect(response).to have_http_status(:no_content)
@@ -52,7 +52,7 @@ RSpec.describe Api::V1::NotesController, type: :controller do
 
     it 'archives the note' do
       Timecop.freeze(Date.today) do
-        delete :destroy, params: note_params
+        patch :archive, params: note_params
 
         expect(note.reload.archived).to be_truthy
         expect(note.reload.archived_at).to eq(Time.zone.now)

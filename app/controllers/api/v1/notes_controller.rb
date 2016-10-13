@@ -11,11 +11,11 @@ module Api::V1
       end
     end
 
-    def destroy
-      @note = Note.find(params[:id])
-      @note.soft_delete
+    def archive
+      note = Note.find(params[:id])
+      note.soft_delete
 
-      render json: { note: @note }, status: :no_content
+      render json: { note: note }, status: :no_content
     end
 
     private
