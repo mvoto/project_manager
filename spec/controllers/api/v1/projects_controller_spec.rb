@@ -172,12 +172,13 @@ RSpec.describe Api::V1::ProjectsController, type: :controller do
     end
   end
 
-  describe "DELETE #destroy" do
-    let(:project) { create(:project) }
-    let(:project_params) { { id: project.id } }
+  describe "PATCH #archive" do
+    let(:fst_project) { create(:project) }
+    let(:snd_project) { create(:project) }
+    let(:project_params) { { ids: [fst_project.id, snd_project] } }
 
-    it 'makes delete request successfully' do
-      delete :destroy, params: project_params
+    it 'makes soft deletion successfully' do
+      patch :archive, params: project_params
 
       expect(response.status).to eq(204)
       expect(response).to have_http_status(:no_content)
@@ -185,10 +186,24 @@ RSpec.describe Api::V1::ProjectsController, type: :controller do
 
     it 'archives the project' do
       Timecop.freeze(Date.today) do
-        delete :destroy, params: project_params
+        patch :archive, params: project_params
 
-        expect(project.reload.archived).to be_truthy
-        expect(project.reload.archived_at).to eq(Time.zone.now)
+        [fst_project, snd_project].each do |project|
+          expect(project.reload.archived).to be_truthy
+          expect(project.reload.archived_at).to eq(Time.zone.now)
+        end
+
+      end
+    end
+
+    context 'given only one project' do
+      let(:project_params) { { ids: fst_project.id } }
+
+      it 'makes soft deletion successfully' do
+        patch :archive, params: project_params
+
+        expect(response.status).to eq(204)
+        expect(response).to have_http_status(:no_content)
       end
     end
   end

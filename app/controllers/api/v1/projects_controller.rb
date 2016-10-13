@@ -1,9 +1,9 @@
 module Api::V1
   class ProjectsController < ApplicationController
-    before_action :fetch_project, only: [:update, :destroy, :finish]
+    before_action :fetch_project, only: [:update, :finish]
 
     def index
-      render json: Project.all.includes(:notes, :client)
+      render json: Project.all
     end
 
     def create
@@ -29,15 +29,15 @@ module Api::V1
       end
     end
 
-    def destroy
-      @project.soft_delete
+    def archive
+      projects = Project.where(id: params[:ids])
+      projects.map(&:soft_delete)
 
-      render json: { project: @project }, status: :no_content
+      render status: :no_content
     end
 
     def finish
       @project.mark_as_finished
-
       render json: { project: @project }
     end
 

@@ -11,7 +11,7 @@ class Project < ApplicationRecord
   validates :state, inclusion: { in: STATES }
 
   # Scopes
-  default_scope { where(archived: false).order(created_at: :desc) }
+  default_scope { where(archived: false).includes(:notes, :client).order(created_at: :desc) }
   scope :with_archived, -> { where(archived: true).order(created_at: :desc) }
 
   def check_conclusion_date_errors(conclusion_date_entry)
